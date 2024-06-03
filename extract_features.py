@@ -24,8 +24,8 @@ if __name__ == '__main__':
     sam = sam_model_registry[model_type](checkpoint=args.sam_checkpoint_path).to('cuda')
     predictor = SamPredictor(sam)
     
-    IMAGE_DIR = os.path.join(args.image_root, 'images' if args.downscale == '1' else f'images_{args.downscale}')
-    
+    IMAGE_DIR = os.path.join(args.image_root, 'images' if args.downscale == 1 else f'images_{args.downscale}')
+    print(IMAGE_DIR)
     assert os.path.exists(IMAGE_DIR) and "Please specify a valid image root"
     OUTPUT_DIR = os.path.join(args.image_root, 'features')
     os.makedirs(OUTPUT_DIR, exist_ok=True)

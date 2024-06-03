@@ -3,3 +3,10 @@
 /data/
 /logs/
 /dependencies/
+output
+./output/
+sam_ckpt
+tmpvis_files
+train_gs.sh
+submodules/simple-knn/
+submodules/diff-gaussian-rasterization-depth/

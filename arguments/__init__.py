@@ -109,7 +109,7 @@ def get_combined_args(parser : ArgumentParser, target_cfg_file = None):
     
     if target_cfg_file is None:
         if args_cmdline.target == 'seg':
-            target_cfg_file = "seg_cfg_args"
+            target_cfg_file = "cfg_args"
         elif args_cmdline.target == 'scene' or args_cmdline.target == 'xyz':
             target_cfg_file = "cfg_args"
         elif args_cmdline.target == 'feature' or args_cmdline.target == 'coarse_seg_everything' or args_cmdline.target == 'contrastive_feature' :

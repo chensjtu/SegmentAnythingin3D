@@ -97,7 +97,7 @@ def training(dataset, opt, pipe, iteration, saving_iterations, checkpoint_iterat
     dataset.need_masks = False
     # Initialize SAM predictor
     from segment_anything import sam_model_registry
-    sam_checkpoint = "./third_party/segment-anything/ckpt/sam_vit_h_4b8939.pth"
+    sam_checkpoint = "./sam_ckpt/sam_vit_h_4b8939.pth"
     model_type = "vit_h"
     sam = sam_model_registry[model_type](checkpoint=sam_checkpoint).to("cuda")
     predictor = SamPredictor(sam)
@@ -154,7 +154,7 @@ def training(dataset, opt, pipe, iteration, saving_iterations, checkpoint_iterat
             if iteration == 0:
                 # [X, Y]
 
-                input_point = np.array([[300, 370]])
+                input_point = np.array([[300, 370],[600, 400],[500, 200],[480, 380]])
 
                 os.makedirs('tmpvis_files', exist_ok=True)
                 os.makedirs(f"tmpvis_files/{dataset.source_path.split('/')[-1]}", exist_ok=True)

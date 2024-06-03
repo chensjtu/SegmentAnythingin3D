@@ -10,7 +10,7 @@
 #
 
 import torch
-from scene import Scene, GaussianModel, FeatureGaussianModel
+from scene import Scene, GaussianModel
 import os
 from tqdm import tqdm
 from os import makedirs
@@ -49,18 +49,20 @@ def render_set(model_path, name, iteration, views, gaussians, pipeline, backgrou
         # print(rendering.shape, mask.shape, gt.shape, "rendering.shape, mask.shape, gt.shape")
 
         # print("mask render time", time.time() - start_time)
-        torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
+        # torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
         torchvision.utils.save_image((res["depth"] - res["depth"].min()) / (res["depth"].max() - res["depth"].min()), os.path.join(render_path, '{0:05d}_depth'.format(idx) + ".png"))
         if target == 'seg':
             mask = res["mask"]
+            print(mask.max(),mask.min(),mask.mean(),mask.shape)
             mask[mask <= MASK_THRESHOLD] = 0.
             mask[mask > MASK_THRESHOLD] = 1.
             mask = mask[0, :, :]
             # torchvision.utils.save_image(mask, os.path.join(mask_path, '{0:05d}'.format(idx) + ".png"))
+            # torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
             torchvision.utils.save_image(mask, os.path.join(mask_path, f"{view.image_name}.png"))
         if target == 'seg' or target == 'scene' or target == 'coarse_seg_everything':
-            torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
-            # torchvision.utils.save_image(gt * mask[None], os.path.join(render_path, f"{view.image_name}.png"))
+            # torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
+            torchvision.utils.save_image(gt * mask[None], os.path.join(render_path, f"{view.image_name}.png"))
         elif 'feature' in target:
             torch.save(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".pt"))
         elif target == 'xyz':
@@ -80,7 +82,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         if target == 'feature' or target == 'coarse_seg_everything' or target == 'contrastive_feature':
             feature_gaussians = FeatureGaussianModel(dataset.feature_dim)
 
-        scene = Scene(dataset, gaussians, feature_gaussians, load_iteration=iteration, shuffle=False, mode='eval', target=target if target != 'xyz' else 'scene')
+        scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False, mode='eval', target=target if target != 'xyz' else 'scene')
         scene.save(scene.loaded_iter, target='scene', colored=True)
         if segment:
             if target == 'coarse_seg_everything':
@@ -134,5 +136,5 @@ if __name__ == "__main__":
 
     # Initialize system state (RNG)
     safe_state(args.quiet)
-
+    print(args.iteration)
     render_sets(model.extract(args), args.iteration, pipeline.extract(args), args.skip_train, args.skip_test, args.segment, args.target, args.idx, args.precomputed_mask, args.MASK_THRESHOLD)
